@@ -1,0 +1,112 @@
+    public void conSelect()
+        {
+            if (con.OpenConnection() == true)
+            {
+                string selectquery = "SELECT * FROM users";
+
+                MySqlCommand cmd = new MySqlCommand(selectquery, con.connection);
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                //Read the data and store them in the list
+                while (dataReader.Read())
+                {
+                    con.idusers = dataReader["idusers"].ToString();
+                    con.DBusername = dataReader["Username"].ToString();
+                    con.DBpassword = dataReader["Password"].ToString();
+                    con.AuthenticationLevel = int.Parse(dataReader["AuthenticationLevel"].ToString());
+                    con.Status = bool.Parse(dataReader["Status_IsExpired"].ToString());
+                }
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+            }
+            else
+            {
+                MessageBox.Show("Connection Closed...Cannot Delete Fields");
+            }
+
+        }
+        protected void DeleteUser(object sender, EventArgs e)
+        {
+            conSelect();
+            if (con.OpenConnection() == true)
+            {         
+                foreach (var UserNameitems in con.DBusername)
+                {
+                        UserList.Items.Add(UserNameitems.ToString());
+                }
+                string query = "DELETE FROM users WHERE Username = " + UserList.SelectedItem;
+                MySqlCommand cmd = new MySqlCommand(query, con.connection);
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                cmd = new MySqlCommand(query, con.connection);
+                    cmd.ExecuteNonQuery();
+                    con.CloseConnection();
+                }
+                else
+                {
+                    MessageBox.Show("Connection Closed...Cannot Delete Fields");
+                }
+        }
+
+
+
+
+
+ <div>
+        <h2>Administrator Home Page</h2>
+        <p class="lead">Manage Users</p>
+         
+         <div class="row">
+        <div class="col-md-8">
+            <section id="loginForm">
+                <div class="form-horizontal">
+                   <div class="content">
+                    <aside class="right-side">
+                        <section class="content-header">
+                            
+                            <ol class="breadcrumb" style="margin-top:20px;box-shadow:0 0 1px 1px #dbdbdb">
+                                 <li>  <i class="fa fa-dashboard"></i> </li>
+                                 <li style="margin-left:10px;padding:2px"><a style="color:gray" class="active" href="AdminHome.aspx"> <h4 class="active"> ADD USERS</h4></a></li>
+                              
+                                <li  style="margin-left:10px;padding:2px;border-radius:10px;"><a  href="AdminDelete.aspx"> <h4> DELETE USERS</h4></a></li>
+                           
+                                <li  style="margin-left:10px;padding:2px"><a style="color:gray" href="AdminSuspendUser.aspx"> <h4> SUSPEND USERS</h4></a></li>
+                              
+                                <li  style="margin-left:10px;padding:2px"><a style="color:gray" href="AdminResetPassword.aspx"> <h4> RESET USER PASSWORD</h4></a></li>
+
+                            </ol>
+                        </section>
+                       
+                    </aside>
+                </div> 
+                    <hr />
+                    <asp:PlaceHolder runat="server" ID="ErrorMessage" Visible="false">
+                        <p class="text-danger">
+                            <asp:Literal runat="server" ID="FailureText" />
+                        </p>
+                    </asp:PlaceHolder>
+                    
+                   
+                    <div class="form-group">
+                        <asp:Label runat="server" AssociatedControlID="AuthenticationLevelList" CssClass="col-md-2 control-label">Authentication Level</asp:Label>
+                        <div class="col-md-10">
+                            <asp:DropDownList Width="300px" runat="server" ID="UserList"   CssClass="form-control" >
+                              <asp:ListItem Text="users"  />
+                            </asp:DropDownList>
+                            <asp:RequiredFieldValidator runat="server" ControlToValidate="UserList" CssClass="text-danger" ErrorMessage="The User List field is required." />
+                        </div>
+                    </div>
+                   
+                </div>
+             <!--   <p>
+                    <asp:HyperLink runat="server" ID="RegisterHyperLink" ViewStateMode="Disabled">Register as a new user</asp:HyperLink>
+                </p>-->
+                <p>
+                    <%-- Enable this once you have account confirmation enabled for password reset functionality
+                    <asp:HyperLink runat="server" ID="ForgotPasswordHyperLink" ViewStateMode="Disabled">Forgot your password?</asp:HyperLink>
+                    --%>
+                </p>
+            </section>
+        </div>
+
+    
+    </div>   
+    </div>
